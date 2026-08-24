@@ -1,0 +1,13 @@
+# Dependencies (only a local dev symlink for tests; not part of the package)
+node_modules/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Editor/OS noise
+.idea/
+.vscode/
+*.swp
