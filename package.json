@@ -18,6 +18,9 @@
     "README.zh.md"
   ],
   "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JasonQQ/dsh-btw-plugin.git"
