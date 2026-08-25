@@ -1,0 +1,44 @@
+# On every `v*` tag push: run tests, publish to GitHub Packages, and attach the
+# npm-pack tarball to the release so storefronts can offer a prebuilt install.
+#
+#   git tag v0.2.0 && git push origin v0.2.0
+#
+# If a GitHub release object for the tag does not exist yet, one is created
+# with generated notes.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://npm.pkg.github.com
+
+      - run: npm ci
+      - run: npm test
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Attach tarball to the release
+        run: |
+          npm pack --silent
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" ./*.tgz --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" ./*.tgz --generate-notes
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
