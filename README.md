@@ -1,4 +1,4 @@
-# dsh-btw-plugin
+# @jasonqq/dsh-btw-plugin
 
 A Codex-style `/btw` command for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
 
@@ -40,7 +40,8 @@ the shipped `@deepseek-ai/dsh-base` composition).
    profile store:
 
    ```bash
-   ln -s "$PWD" ~/.dsh/profiles/node_modules/dsh-btw-plugin
+   mkdir -p ~/.dsh/profiles/node_modules/@jasonqq
+   ln -s "$PWD" ~/.dsh/profiles/node_modules/@jasonqq/dsh-btw-plugin
    ```
 
 2. Add it to the profile patch layer (`~/.dsh/profiles/<profile>/cordis.patch.yml`):
@@ -48,7 +49,7 @@ the shipped `@deepseek-ai/dsh-base` composition).
    ```yaml
    - insert:
        - id: btw
-         name: dsh-btw-plugin
+         name: @jasonqq/dsh-btw-plugin
          config:
            provider: fork
    ```
@@ -66,7 +67,7 @@ the shipped `@deepseek-ai/dsh-base` composition).
 ## Development
 
 ```bash
-node --test test/
+npm test
 ```
 
 The tests exercise the handler with a stubbed `ctx.subagents` seam — no live

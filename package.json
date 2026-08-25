@@ -1,5 +1,5 @@
 {
-  "name": "dsh-btw-plugin",
+  "name": "@jasonqq/dsh-btw-plugin",
   "version": "0.1.0",
   "description": "Codex-style /btw for DeepSeek Harness: ask a side question answered by a conversation-seeded subagent, keeping the answer out of the main context",
   "type": "module",
@@ -43,5 +43,8 @@
     "command",
     "btw",
     "subagent"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
 }

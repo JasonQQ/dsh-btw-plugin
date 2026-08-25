@@ -1,4 +1,4 @@
-# dsh-btw-plugin
+# @jasonqq/dsh-btw-plugin
 
 为 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 实现 Codex 风格的 `/btw` 指令。
 
@@ -27,7 +27,8 @@
 1. 让包从 profile 可解析，例如链接到共享 profile 存储：
 
    ```bash
-   ln -s "$PWD" ~/.dsh/profiles/node_modules/dsh-btw-plugin
+   mkdir -p ~/.dsh/profiles/node_modules/@jasonqq
+   ln -s "$PWD" ~/.dsh/profiles/node_modules/@jasonqq/dsh-btw-plugin
    ```
 
 2. 在 profile 补丁层（`~/.dsh/profiles/<profile>/cordis.patch.yml`）中加入：
@@ -35,7 +36,7 @@
    ```yaml
    - insert:
        - id: btw
-         name: dsh-btw-plugin
+         name: @jasonqq/dsh-btw-plugin
          config:
            provider: fork
    ```
@@ -52,7 +53,7 @@
 ## 开发
 
 ```bash
-node --test test/
+npm test
 ```
 
 测试使用桩（stub）化的 `ctx.subagents` seam 来验证 handler，无需真实模型或宿主。
