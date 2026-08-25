@@ -301,3 +301,45 @@ test("already-aborted invocation settles as an error without a child turn", asyn
 	assert.equal(result.kind, "error");
 	assert.match(result.text, /aborted before child publication/);
 });
+
+test("ignores non-text output blocks when collecting the answer", async () => {
+	const ctx = stubCtx({
+		start: () => stubRun({
+			stopReason: "completed",
+			output: [
+				{ type: "tool-result", content: [{ type: "text", text: "noise" }] },
+				{ type: "text", text: "the answer" },
+				{ type: "image", data: "..." }
+			]
+		})
+	});
+	apply(ctx, { provider: "fork" });
+	const result = await invoke(ctx, "q?");
+	assert.deepEqual(result, { kind: "success", text: "the answer" });
+});
+
+test("concurrent invocations start independent runs", async () => {
+	const runs = [];
+	const ctx = stubCtx({
+		start: (request) => {
+			runs.push(request);
+			return stubRun({ stopReason: "completed", output: [{ type: "text", text: `answer-${runs.length}` }] });
+		}
+	});
+	apply(ctx, { provider: "fork" });
+	const [definition] = ctx.commands.definitions;
+	const mkInvocation = (rawInput) => definition.handler({
+		commandId: `cmd-${rawInput}`,
+		agent: { session: {} },
+		rawInput,
+		attachments: [],
+		signal: new AbortController().signal
+	});
+	const [a, b] = await Promise.all([mkInvocation("q1"), mkInvocation("q2")]);
+	assert.equal(a.kind, "success");
+	assert.equal(b.kind, "success");
+	assert.equal(a.text, "answer-1");
+	assert.equal(b.text, "answer-2");
+	assert.equal(runs.length, 2);
+	assert.notEqual(runs[0], runs[1]);
+});
