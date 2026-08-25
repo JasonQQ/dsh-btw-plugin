@@ -214,3 +214,90 @@ test("omits maxDepth when not configured", async () => {
 	await invoke(ctx, "q?");
 	assert.equal("maxDepth" in calls[0], false);
 });
+
+test("empty answer from a completed run returns an error", async () => {
+	const ctx = stubCtx({
+		start: () => stubRun({ stopReason: "completed", output: [] })
+	});
+	apply(ctx, { provider: "fork" });
+	const result = await invoke(ctx, "q?");
+	assert.equal(result.kind, "error");
+	assert.match(result.text, /empty answer/);
+});
+
+test("run.result rejection returns an error and still disposes", async () => {
+	const run = {
+		id: "run-1",
+		disposed: false,
+		result: Promise.reject(new Error("boom")),
+		async dispose() {
+			this.disposed = true;
+		}
+	};
+	const ctx = stubCtx({ start: () => run });
+	apply(ctx, { provider: "fork" });
+	const result = await invoke(ctx, "q?");
+	assert.equal(result.kind, "error");
+	assert.match(result.text, /failed: boom/);
+	assert.equal(run.disposed, true);
+});
+
+test("disposal failure does not discard a collected answer", async () => {
+	const run = {
+		id: "run-1",
+		result: Promise.resolve({ stopReason: "completed", output: [{ type: "text", text: "ok" }] }),
+		async dispose() {
+			throw new Error("dispose boom");
+		}
+	};
+	const ctx = stubCtx({ start: () => run });
+	apply(ctx, { provider: "fork" });
+	const result = await invoke(ctx, "q?");
+	assert.deepEqual(result, { kind: "success", text: "ok" });
+});
+
+test("forwards the invocation abort signal to the subagent", async () => {
+	const calls = [];
+	const controller = new AbortController();
+	const ctx = stubCtx({
+		start: (request) => {
+			calls.push(request);
+			return stubRun({ stopReason: "completed", output: [{ type: "text", text: "ok" }] });
+		}
+	});
+	apply(ctx, { provider: "fork" });
+	const [definition] = ctx.commands.definitions;
+	await definition.handler({
+		commandId: "cmd-1",
+		agent: { session: {} },
+		rawInput: "q?",
+		attachments: [],
+		signal: controller.signal
+	});
+	assert.equal(calls[0].signal, controller.signal);
+});
+
+test("already-aborted invocation settles as an error without a child turn", async () => {
+	const started = [];
+	const controller = new AbortController();
+	controller.abort();
+	const ctx = stubCtx({
+		start: async (request) => {
+			started.push(request);
+			throw new Error("subagent request was aborted before child publication");
+		}
+	});
+	apply(ctx, { provider: "fork" });
+	const [definition] = ctx.commands.definitions;
+	const result = await definition.handler({
+		commandId: "cmd-1",
+		agent: { session: {} },
+		rawInput: "q?",
+		attachments: [],
+		signal: controller.signal
+	});
+	// The provider driver rejects pre-publication; the plugin surfaces it.
+	assert.equal(started.length, 1);
+	assert.equal(result.kind, "error");
+	assert.match(result.text, /aborted before child publication/);
+});

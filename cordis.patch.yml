@@ -1,0 +1,8 @@
+# dsh.bundle manifest for @jasonqq/dsh-btw-plugin — makes the plugin
+# installable via `dsh plugin add` / storefronts: inserting this row into a
+# profile composes the /btw command through the harness command registry.
+- insert:
+    - id: btw
+      name: '@jasonqq/dsh-btw-plugin'
+      config:
+        provider: fork
