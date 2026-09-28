@@ -43,6 +43,17 @@
 
    profile 补丁在启动时读取。桌面应用中，编辑后需要重启应用才能生效（CLI 的 `dsh web` 运行器会热重载补丁）。
 
+## 兼容性
+
+| Harness（`@deepseek-ai/dsh-*`） | cordis | schemastery | 状态                                                            |
+| ------------------------------ | ------ | ----------- | --------------------------------------------------------------- |
+| `0.1.5-rc.2`                   | 4.0.2  | 3.18.2      | ✅ 已验证 —— DSH Desktop 2.0.13，端到端跑通 `/btw`（2026-09-23）  |
+| `0.1.1-rc.2`                   | 4.0.1  | 3.18.1      | ✅ 已验证 —— DSH Desktop 2.0.3                                   |
+
+插件依赖的命令面（`commands.register()`、`CommandInvocation`、`CommandResult`、
+`subagents.getProvider()` / `start()`、`SubagentRun.result` / `dispose()`、
+`SubagentResult.output` / `stopReason` 及五个 stop reason）在上述版本线之间没有破坏性变更。
+
 ## 配置
 
 | 键         | 默认值   | 说明                                                                                              |

@@ -57,6 +57,18 @@ the shipped `@deepseek-ai/dsh-base` composition).
    The profile patch is read at boot. In the desktop app, restart the app
    after editing it (the CLI `dsh web` runner hot-reloads its patches).
 
+## Compatibility
+
+| Harness (`@deepseek-ai/dsh-*`) | cordis | schemastery | Status                                                                    |
+| ------------------------------ | ------ | ----------- | ------------------------------------------------------------------------- |
+| `0.1.5-rc.2`                   | 4.0.2  | 3.18.2      | ✅ Verified — DSH Desktop 2.0.13, end-to-end `/btw` run (2026-09-23)       |
+| `0.1.1-rc.2`                   | 4.0.1  | 3.18.1      | ✅ Verified — DSH Desktop 2.0.3                                            |
+
+The command surface this plugin depends on — `commands.register()`,
+`CommandInvocation`, `CommandResult`, `subagents.getProvider()` / `start()`,
+`SubagentRun.result` / `dispose()`, `SubagentResult.output` / `stopReason` and
+the five stop reasons — is unchanged across those lines.
+
 ## Configuration
 
 | Key        | Default  | Meaning                                                                  |
