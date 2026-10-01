@@ -61,13 +61,16 @@ the shipped `@deepseek-ai/dsh-base` composition).
 
 | Harness (`@deepseek-ai/dsh-*`) | cordis | schemastery | Status                                                                    |
 | ------------------------------ | ------ | ----------- | ------------------------------------------------------------------------- |
+| `0.2.0-rc.2`                   | 4.0.4  | 3.18.4      | ✅ Verified — DSH Desktop 2.0.17, end-to-end `/btw` run (2026-10-01)       |
 | `0.1.5-rc.2`                   | 4.0.2  | 3.18.2      | ✅ Verified — DSH Desktop 2.0.13, end-to-end `/btw` run (2026-09-23)       |
 | `0.1.1-rc.2`                   | 4.0.1  | 3.18.1      | ✅ Verified — DSH Desktop 2.0.3                                            |
 
 The command surface this plugin depends on — `commands.register()`,
 `CommandInvocation`, `CommandResult`, `subagents.getProvider()` / `start()`,
 `SubagentRun.result` / `dispose()`, `SubagentResult.output` / `stopReason` and
-the five stop reasons — is unchanged across those lines.
+the five stop reasons — is unchanged across those lines. The one difference in
+`0.2.0` is a tightening: `SubagentResult.output` is now `readonly
+ContentBlock[]`, which this plugin's `filter`/`map` usage already satisfies.
 
 ## Configuration
 

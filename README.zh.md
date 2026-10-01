@@ -47,12 +47,15 @@
 
 | Harness（`@deepseek-ai/dsh-*`） | cordis | schemastery | 状态                                                            |
 | ------------------------------ | ------ | ----------- | --------------------------------------------------------------- |
+| `0.2.0-rc.2`                   | 4.0.4  | 3.18.4      | ✅ 已验证 —— DSH Desktop 2.0.17，端到端跑通 `/btw`（2026-10-01）  |
 | `0.1.5-rc.2`                   | 4.0.2  | 3.18.2      | ✅ 已验证 —— DSH Desktop 2.0.13，端到端跑通 `/btw`（2026-09-23）  |
 | `0.1.1-rc.2`                   | 4.0.1  | 3.18.1      | ✅ 已验证 —— DSH Desktop 2.0.3                                   |
 
 插件依赖的命令面（`commands.register()`、`CommandInvocation`、`CommandResult`、
 `subagents.getProvider()` / `start()`、`SubagentRun.result` / `dispose()`、
 `SubagentResult.output` / `stopReason` 及五个 stop reason）在上述版本线之间没有破坏性变更。
+`0.2.0` 唯一的差异是一处收紧：`SubagentResult.output` 变为 `readonly ContentBlock[]`，
+插件现有的 `filter`/`map` 用法本就满足该约束。
 
 ## 配置
 
