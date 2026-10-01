@@ -16,7 +16,10 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        # Floor matches engines.node (>=22.19.0 in package.json): the harness
+        # this plugin loads into requires that, so testing 18.x/20.x only
+        # reported a compatibility nobody can use.
+        node-version: [22.x, 24.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
